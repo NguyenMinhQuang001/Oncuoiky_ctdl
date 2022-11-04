@@ -1,0 +1,190 @@
+#include<Stdio.h>
+
+struct SINHVIEN
+{
+	int MaSV;
+	char HoTen[30];
+	float Diem;
+};
+
+struct NODE{ 
+	SINHVIEN Key; 
+	NODE *pLeft; 
+	NODE *pRight; 
+}; 
+//
+void NhapSV(SINHVIEN &x)
+{
+	printf("Ma SV: ");
+	scanf("%d", &x.MaSV);	
+	
+	printf("Ten SV : ");
+	fflush(stdin);
+	gets(x.HoTen);
+	
+	printf("Nam thanh lap: ");
+	scanf("%f", &x.Diem);
+	
+}
+// xuat mot may tinh
+void XuatSV(SINHVIEN x)
+{
+	printf("\n%10s %20s %d %d %d ", x.MaSV, x.HoTen, x.Diem);
+	 
+}
+
+//
+void Init(NODE *&TREE) 
+{ 
+ 	TREE = NULL; 
+} 
+
+void Insert (NODE *&pRoot, SINHVIEN x) 
+{ 
+	if (pRoot == NULL) 
+ 	{ 
+	 NODE *q; 	
+	 q = new NODE; 
+	 q->Key = x; 
+	 q->pLeft = q->pRight = NULL; 
+	 pRoot = q; 
+	 } 
+	else 
+	 { 
+	 if (x.MaSV < pRoot->Key.MaSV) 
+	 	Insert (pRoot->pLeft, x); 
+	 else if (x.MaSV > pRoot->Key.MaSV) 
+	 	Insert (pRoot->pRight, x); 
+	 } 
+} 
+void CreateTree(NODE *&pRoot) 
+{ 
+	int n;
+	SINHVIEN x; 
+	
+	printf("\n Nhap vao so node: ");
+	scanf("%d",&n);
+	
+
+	for(int i = 0; i < n; i++ )
+	{ 
+	 printf("Nhap vao SV thu %d: ", i); 
+	 
+	 NhapSV(x);
+	
+	 Insert(pRoot, x); 
+	 }; 
+	} 
+void NLR(NODE* pTree) 
+{ 
+	if(pTree != NULL) 
+	 { 
+	 XuatSV(x); 
+	 NLR(pTree->pLeft); 
+	 NLR(pTree->pRight); 
+	 } 
+} 
+int DEMLA(NODE*pRoot)
+{   if(pRoot==NULL) return 0;
+    else
+       if(pRoot->pLeft==NULL && pRoot->pRight==NULL) return 1;
+       else return DEMLA(pRoot->pLeft)+DEMLA(pRoot->pRight);
+}
+NODE* Search(NODE* pRoot, int x) 
+{ 
+	if(pRoot == NULL) 
+	 return NULL; 
+	if(x < pRoot->Key) 
+	 Search(pRoot->pLeft, x); 
+	else 
+	 if(x > pRoot->Key) 
+	 Search(pRoot->pRight, x); 
+	 else 
+	 { 
+	 return pRoot; 
+ 	} 
+} 
+int Height(NODE* pNode) 
+{ 
+	if(pNode == NULL) 
+	 return 0; 
+	int HL, HR; //hightleft, hightright
+	 HL = Height(pNode->pLeft); 
+	 HR = Height(pNode->pRight); 
+	if(HL > HR) 
+	 return (1 + HL); 
+	return (1 + HR); 
+}
+void SearchStandFor(NODE* &Tree, NODE* &q) 
+{ 
+	if (Tree->pRight) 
+	 SearchStandFor(Tree->pRight,q); 
+	else 
+	 { 
+	 q->Key = Tree->Key; 
+	 q = Tree; 
+	 Tree = Tree->pLeft; 
+	 } 
+} 
+void RemoveNode(NODE* &Tree, int x) 
+{ 
+	 NODE* p;	 
+	if(Tree == NULL) 
+	 printf("%d khong co trong cay", x); 
+	else 
+	 { 
+	 if (x < Tree->Key) 
+	 	RemoveNode(Tree->pLeft,x); 
+	 else 
+	 	if (x > Tree->Key) 
+	 		RemoveNode(Tree->pRight,x); 
+	 	else 
+	 	{ 
+	 	 p = Tree; 
+		 if(p->pRight == NULL) 
+		 	Tree = p->pLeft; 
+		 else 
+		 	if (p->pLeft == NULL) 
+		 		Tree = p->pRight; 
+		 else { 
+		 	SearchStandFor(Tree->pLeft,p); 
+		 } 
+		 delete p; 
+		 } 
+	 } 
+} 
+int main() 
+{ 
+	 NODE* pTree, *p;
+	 int x; 
+	 Init(pTree); 
+	 CreateTree(pTree); 
+	 printf(" Cay sau khi duyet:\n");
+	 NLR(pTree); 
+	 printf("\nNhap vao 1 gia tri de tim: "); 
+	 scanf("%d", &x); 
+	 p = Search(pTree, x); 
+	 if(p != NULL) 
+	 { 
+		 printf ("%d co xuat hien trong cay.\n", x); 
+		 printf("\nChieu cao cua nut %d la: %d\n", x, Height(p)); 
+		 RemoveNode(pTree, x); 
+		 printf("\nCay sau khi xoa la:\n");
+		 NLR(pTree); 
+	 } 
+	else 
+		printf("%d khong co trong cay.\n", x); 
+		
+	printf("\nNhap so nut muon them:");
+	scanf("%d",&x);
+		for(int i =1;i<=x;i++){
+			int l;
+			printf("Nut them thu %d:", i);
+			scanf("%d",&l);
+			Insert(pTree,l);
+		}
+	printf("\nCay sau khi them la:\n");
+	NLR(pTree);
+}
+
+
